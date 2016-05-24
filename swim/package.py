@@ -4,6 +4,15 @@ import json
 from subprocess import Popen, PIPE
 
 
+class Dependency(object):
+    @classmethod
+    def fromjson(cls, json):
+        return cls(json['url'])
+
+    def __init__(self, url):
+        self.url = url
+
+
 class Package(object):
     @classmethod
     def open(cls):
@@ -27,10 +36,17 @@ class Package(object):
 
             package = json.loads(output)
 
-        return cls(name=package['name'])
+        dependencies = [Dependency.fromjson(x) for x in package['dependencies']]
+        test_dependencies = [Dependency.fromjson(x) for x in package['test_dependencies']]
 
-    def __init__(self, name):
+        return cls(name=package['name'],
+                   dependencies=dependencies,
+                   test_dependencies=test_dependencies)
+
+    def __init__(self, name, dependencies=None, test_dependencies=None):
         self.name = name
+        self.dependencies = dependencies or []
+        self.test_dependencies = test_dependencies or []
 
     def __str__(self):
         return self.name

@@ -15,6 +15,18 @@ class PackageTest(unittest.TestCase):
 
         self.assertEqual(package.name, 'hpack')
 
+    def test_open_package_dependencies(self):
+        with chdir('tests/fixtures/stencil'):
+            package = Package.open()
+
+        self.assertEqual(package.name, 'Stencil')
+        self.assertEqual(len(package.dependencies), 1)
+        self.assertEqual(len(package.test_dependencies), 1)
+        self.assertEqual(package.dependencies[0].url,
+            'https://github.com/kylef/PathKit.git')
+        self.assertEqual(package.test_dependencies[0].url,
+            'https://github.com/kylef/spectre-build')
+
 
 class chdir(object):
     def __init__(self, directory):
