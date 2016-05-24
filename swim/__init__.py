@@ -31,5 +31,17 @@ def build():
     builder.build()
 
 
+@click.command()
+def test():
+    if not os.path.exists('Package.swift'):
+        raise click.ClickException('no Package.swift found')
+
+    package = Package.open()
+    builder = Builder(package)
+    builder.build_tests()
+    builder.run_tests()
+
+
 cli.add_command(build)
+cli.add_command(test)
 cli.add_command(clean)
