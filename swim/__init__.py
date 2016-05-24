@@ -1,6 +1,7 @@
 import platform
 import os
 import re
+import shutil
 from glob import glob
 import click
 import subprocess
@@ -41,6 +42,12 @@ def cli():
 
 
 @click.command()
+def clean():
+    if os.path.exists('.build'):
+        shutil.rmtree('.build')
+
+
+@click.command()
 def build():
     if not os.path.exists('Package.swift'):
         raise click.ClickException('no Package.swift found')
@@ -63,3 +70,4 @@ def build():
 
 
 cli.add_command(build)
+cli.add_command(clean)
