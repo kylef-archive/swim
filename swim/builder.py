@@ -12,6 +12,7 @@ class Builder(object):
         self.package = package
         self.configuration = configuration
         self.build_path = os.path.join('.build', configuration)
+        self.verbose = False
 
     def build(self):
         self.build_package(self.package, os.getcwd())
@@ -65,6 +66,7 @@ class Builder(object):
             raise Exception('Tests is missing a main.swift')
 
     def run_tests(self):
+        os.environ['LD_LIBRARY_PATH'] = self.build_path
         runner = os.path.join(self.build_path, self.package.name + 'Tests')
         subprocess.check_call(runner)
 
@@ -91,7 +93,9 @@ class Builder(object):
 
         args += ['-l{}'.format(d.name) for d in dependencies]
 
-        print(args + list(arguments))
+        if self.verbose:
+            print(' '.join(args + list(arguments)))
+
         subprocess.check_call(args + list(arguments))
 
     def build_cli(self, module, sources, dependencies):
@@ -110,11 +114,16 @@ class Builder(object):
         Buils the module as a library.
         """
 
+        if platform.system() == 'Darwin':
+            libname = 'lib{}.dylib'.format(module)
+        else:
+            libname = 'lib{}.so'.format(module)
+
         args = [
             '-emit-module',
-            '-emit-module-path', self.build_path + '/',
+            '-emit-module-path', os.path.join(self.build_path, '{}.swiftmodule'.format(module)),
             '-emit-library',
-            '-o', os.path.join(self.build_path, 'lib{}.dylib'.format(module)),
+            '-o', os.path.join(self.build_path, libname),
         ] + sources
 
         self.swiftc(module, dependencies, *args)
