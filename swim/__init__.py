@@ -6,35 +6,8 @@ import click
 import subprocess
 
 from swim.package import Package
+from swim.builder import Builder
 
-
-def collect_sources(path):
-    return glob(os.path.join(path, '*.swift'))
-
-
-def swiftc_cli(module, configuration, sources):
-    """
-    Buils a command line tool.
-    """
-
-    args = [
-        'swiftc',
-        '-module-name', module,
-        '-module-cache-path', '.build/{}/ModuleCache'.format(configuration),
-
-    ]
-
-    if platform.system() == 'Darwin':
-        args += [
-            '-target', 'x86_64-apple-macosx10.10',
-            '-sdk', '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk',
-        ]
-
-    args += [
-        '-o', '.build/{}/{}'.format(configuration, module),
-    ]
-
-    subprocess.check_call(args + sources)
 
 
 @click.group()
@@ -54,15 +27,8 @@ def build():
         raise click.ClickException('no Package.swift found')
 
     package = Package.open()
-
-    sources = collect_sources('Sources')
-    configuration = 'debug'
-
-    has_main = len([s for s in sources if s.endswith('/main.swift')]) > 0
-    if has_main:
-        swiftc_cli(package.name, configuration, sources)
-    else:
-        raise click.ClickException('swim only supports CLI tools')
+    builder = Builder(package)
+    builder.build()
 
 
 cli.add_command(build)

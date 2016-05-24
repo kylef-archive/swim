@@ -16,6 +16,10 @@ class Dependency(object):
 class Package(object):
     @classmethod
     def open(cls):
+        if os.stat('Package.swift').st_size == 0:
+            name = os.path.basename(os.getcwd())
+            return cls(name=name)
+
         with open('Package.swift') as fp:
             package_source = fp.read().replace('import PackageDescription', '')
 
