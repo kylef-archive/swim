@@ -36,12 +36,39 @@ public struct Package {
   }
 
   func toJSON() -> String {
-    // To be compatible with multiple Swift versions. We're not using join :(.
+    var json = ""
 
+#if swift(>=3.0)
     let dependenciesJSON = dependencies.map { $0.toJSON() }
     let testDependenciesJSON = testDependencies.map { $0.toJSON() }
 
-    var json = ""
+    json += "{"
+    json += "  \"name\": \"\(name)\","
+    json += "  \"dependencies\": ["
+
+    for (index, dependency) in dependenciesJSON.enumerated() {
+      json += dependency
+      if index + 1 < dependenciesJSON.count {
+        json += ","
+      }
+    }
+
+    json += "  ],"
+    json += "  \"test_dependencies\": ["
+
+    for (index, dependency) in testDependenciesJSON.enumerated() {
+      json += dependency
+      if index + 1 < testDependenciesJSON.count {
+        json += ","
+      }
+    }
+
+    json += "  ]"
+    json += "}"
+#else
+    let dependenciesJSON = dependencies.map { $0.toJSON() }
+    let testDependenciesJSON = testDependencies.map { $0.toJSON() }
+
     json += "{"
     json += "  \"name\": \"\(name)\","
     json += "  \"dependencies\": ["
@@ -65,6 +92,7 @@ public struct Package {
 
     json += "  ]"
     json += "}"
+#endif
     return json
   }
 }
