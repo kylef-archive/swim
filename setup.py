@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='swim',
-    version='0.1.0',
+    version='0.1.1',
     description='Simple build system for the Swift language',
     url='https://github.com/kylef/swim',
     packages=find_packages(),
