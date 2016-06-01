@@ -90,6 +90,20 @@ install:
 It works great on conjunction with [swiftenv](https://swiftenv.fuller.li/).
 
 ```yaml
-TODO
-
+os:
+  - linux
+  - osx
+env:
+  - SWIFT_VERSION=2.2
+  - SWIFT_VERSION=3.0-preview-1-SNAPSHOT-2016-05-31-a
+language: generic
+sudo: required
+dist: trusty
+osx_image: xcode7.3
+install:
+  - eval "$(curl -sL https://gist.githubusercontent.com/kylef/5c0475ff02b7c7671d2a/raw/9f442512a46d7a2af7b850d65a7e9bd31edfb09b/swiftenv-install.sh)"
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo python -m ensurepip; fi
+  - sudo pip install swim
+script:
+  - swim test
 ```
