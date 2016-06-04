@@ -39,7 +39,7 @@ $ swim build
 ### Testing
 
 You can integrate swim with any testing library of your choice, you will need
-to call create a `main.swift` file inside `Tests` which runs your tests.
+to create a `main.swift` file inside `Tests` which runs your tests.
 
 ```shell
 $ swim test
