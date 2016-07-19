@@ -57,6 +57,15 @@ class Builder(object):
             dependencies.append(sub_package)
         dependencies.append(package)
 
+        for dependency in package.dependencies:
+            path = path_for_dependency(dependency)
+
+            os.chdir(path)
+            sub_package = Package.open()
+            os.chdir(os.path.join('..', '..'))
+
+            dependencies.append(sub_package)
+
         sources = collect_sources(os.path.join(package_root, 'Tests'))
 
         has_main = len([s for s in sources if s.endswith('/main.swift')]) > 0
